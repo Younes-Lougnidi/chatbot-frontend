@@ -1,24 +1,87 @@
 import React from "react";
 import Chatbot_avatar from "../assets/chatbot-avatar.png";
-import "./ChatHeader.css";
+import { Box, Typography, Avatar, IconButton } from "@mui/material";
+import { MoreVert } from "@mui/icons-material";
 
 function ChatHeader() {
   return (
-    <div className="header">
-      <img src={Chatbot_avatar} alt="Logo" />
-      <div className="text-block">
-        <h1>My Chatbot</h1>
-        <p className="subtext">You can ask me anything</p>
-      </div>
-      <button className="options-button" aria-label="Options">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-          <circle cx="12" cy="5" r="2" />
-          <circle cx="12" cy="12" r="2" />
-          <circle cx="12" cy="19" r="2" />
-        </svg>
-      </button>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: { xs: "12px 16px", sm: "16px 20px", md: "20px 24px" },
+        background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+        borderRadius: { xs: "20px 20px 0 0", md: "25px 25px 0 0" },
+        color: "white",
+        maxWidth: 700,
+        width: "100%",
+        margin: "0 auto",
+        boxShadow: "0 4px 20px rgba(239, 68, 68, 0.3)",
+        gap:2,
+      }}
+    >
+      <Avatar
+        src={Chatbot_avatar}
+        alt="Logo"
+        sx={{
+          width: 40,
+          height: 40,
+          marginRight: "10px",
+          backgroundColor: "white",
+        }}
+      />
 
-    </div>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 0.5,
+          flex: 1,
+        }}
+      >
+        <Typography
+          variant="h1"
+          sx={{
+            fontSize: { xs: "18px", sm: "20px", md: "28px" },
+            fontWeight: 600,
+            margin: 0,
+          }}
+        >
+          My Chatbot
+        </Typography>
+        <Typography
+          sx={{
+            fontSize: { xs: "13px", sm: "14px", md: "20px" },
+            opacity: 0.8,
+            margin: 0,
+          }}
+        >
+          You can ask me anything
+        </Typography>
+      </Box>
+
+      <IconButton
+        aria-label="Options"
+        sx={{
+          backgroundColor: "rgba(255, 255, 255, 0.15)",
+          color: "white",
+          width: 40,
+          height: 40,
+          backdropFilter: "blur(10px)",
+          transition: "all 0.2s ease",
+          "&:hover": {
+            backgroundColor: "rgba(255, 255, 255, 0.25)",
+            transform: "scale(1.05)",
+          },
+          "&:active": {
+            transform: "scale(0.95)",
+          },
+        }}
+      >
+        <MoreVert />
+      </IconButton>
+    </Box>
   );
 }
 
