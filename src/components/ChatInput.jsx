@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Box, TextField, IconButton, Paper } from "@mui/material";
+import { Box, TextField, IconButton, Paper,useTheme } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 
 function ChatInput({ onAdd }) {
+  const theme = useTheme();
   const [sender, setSender] = useState("");
   const [inputValue, setInputValue] = useState("");
   const isSendEnabled =
@@ -33,7 +34,7 @@ function ChatInput({ onAdd }) {
     <Box
       sx={{
         position: "relative",
-        background: "white",
+        background: theme.palette.background.paper,
         borderBottomLeftRadius: "25px",
         borderBottomRightRadius: "25px",
         width: "100%",
@@ -41,6 +42,7 @@ function ChatInput({ onAdd }) {
         margin: "0 auto",
         padding: { xs: "0 8px", sm: "0 12px" },
         border: 0,
+        transition: theme.transitions.create('background'),
       }}
     >
       <Paper
@@ -50,14 +52,14 @@ function ChatInput({ onAdd }) {
           alignItems: "center",
           gap: { xs: "6px", sm: "12px" },
           padding: { xs: "8px 10px", sm: "16px 20px" },
-          background: "white",
+          background: theme.palette.background.paper,
           borderRadius: "25px",
           margin: { xs: "8px 0", sm: "16px" },
-          border: "2px solid #e8e8e8",
-          transition: "all 0.2s ease",
+          border: `2px solid ${theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'}`,
+          transition: theme.transitions.create(['border-color', 'box-shadow']),
           "&:focus-within": {
-            borderColor: "#ef4444",
-            boxShadow: "0 0 0 3px rgba(239, 68, 68, 0.1)",
+            borderColor: theme.palette.primary.main,
+            boxShadow: `0 0 0 3px ${theme.palette.primary.light}40`,
           },
         }}
       >
@@ -70,12 +72,13 @@ function ChatInput({ onAdd }) {
           InputProps={{
             disableUnderline: true,
             sx: {
-              border: "2px solid #e8e8e8",
+              border: `2px solid ${theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'}`,
               borderRadius: "25px",
               minHeight: { xs: "32px", sm: "35px" },
               width: { xs: "80px", sm: "100px" },
               textAlign: "center",
               padding: "3px 8px",
+              color: theme.palette.text.primary,
               fontSize: { xs: "13px", sm: "16px" },
               "& input": {
                 textAlign: "center",
@@ -105,7 +108,7 @@ function ChatInput({ onAdd }) {
                 border: 'none',
                 outline: 'none',
                 fontSize: { xs: "14px", sm: "16px" },
-                color: "#333",
+                color: theme.palette.text.primary,
                 background: "transparent",
                 minHeight: "24px",
                 maxHeight: "120px",
@@ -121,7 +124,7 @@ function ChatInput({ onAdd }) {
                   resize : 'none',
                   overflow:"hidden",
                   '&::placeholder': {
-                    color: "#999",
+                    color: theme.palette.text.secondary,
                     opacity: 1,
                   },
                 },
@@ -135,13 +138,13 @@ function ChatInput({ onAdd }) {
             sx={{
               width: { xs: "30px", sm: "36px" },
               height: { xs: "30px", sm: "36px" },
-              background: "#ef4444",
+              background: theme.palette.primary.main,
               color: "white",
               opacity: isSendEnabled ? 1 : 0.5,
               cursor: isSendEnabled ? "pointer" : "not-allowed",
               transition: "all 0.2s ease",
               "&:hover": {
-                background: "#dc2626",
+                background: theme.palette.primary.dark,
                 transform: isSendEnabled ? "scale(1.05)" : "none",
               },
               "& svg": {

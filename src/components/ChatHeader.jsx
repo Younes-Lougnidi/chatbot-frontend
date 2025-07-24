@@ -1,9 +1,13 @@
-import React from "react";
+import { useState,useContext } from 'react';
 import Chatbot_avatar from "../assets/chatbot-avatar.png";
 import { Box, Typography, Avatar, IconButton } from "@mui/material";
 import { MoreVert } from "@mui/icons-material";
+import { ThemeContext } from './ThemeContext';
+import OptionForm from './OptionForm';
 
 function ChatHeader() {
+  const [optionsOpen, setOptionsOpen] = useState(false);
+  const { mode, toggleTheme } = useContext(ThemeContext);
   return (
     <Box
       sx={{
@@ -63,6 +67,8 @@ function ChatHeader() {
 
       <IconButton
         aria-label="Options"
+        onClick={() => setOptionsOpen(true)}
+
         sx={{
           backgroundColor: "rgba(255, 255, 255, 0.15)",
           color: "white",
@@ -81,6 +87,12 @@ function ChatHeader() {
       >
         <MoreVert />
       </IconButton>
+      <OptionForm 
+        open={optionsOpen}
+        onClose={() => setOptionsOpen(false)}
+        isDarkMode={mode === 'dark'}
+        toggleTheme={toggleTheme}
+      />
     </Box>
   );
 }
