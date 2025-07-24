@@ -20,27 +20,27 @@ export const CustomThemeProvider = ({ children }) => {
       ...(mode === 'dark' ? {
         // Dark mode overrides
         background: {
-          default: '#0f172a',    // Deep blue-gray
-          paper: '#1e293b',      // Slightly lighter
+          default: '#0f172a',    
+          paper: '#1e293b',      
         },
         text: {
-          primary: '#f8fafc',    // Bright white
-          secondary: '#94a3b8',  // Soft gray
+          primary: '#f8fafc',   
+          secondary: '#94a3b8',  
         },
       } : {
         // Light mode defaults
         background: {
-          default: 'white',    // Light gray
+          default: 'white',    
           paper: '#ffffff',
         },
       }),
     },
     shape: {
-      borderRadius: 12, // Rounded corners globally
+      borderRadius: 12, 
     },
     transitions: {
       duration: {
-        enteringScreen: 300, // Smooth transitions
+        enteringScreen: 300, 
       },
     },
   components: {
