@@ -6,7 +6,6 @@ function ChatWindow({ messages }) {
   const theme = useTheme();
   const scrollRef = useRef(null);
 
-
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -22,13 +21,13 @@ function ChatWindow({ messages }) {
         margin: "0 auto",
         backgroundColor: theme.palette.background.paper,
         height: { xs: 300, sm: 450 },
-        overflowY: "auto",            
+        overflowY: "auto",
         padding: { xs: "8px", sm: "24px" },
         border: 0,
         transition: theme.transitions.create("background-color"),
         scrollbarWidth: "none",
         "&::-webkit-scrollbar": {
-        display: "none",              
+          display: "none",
         },
       }}
       ref={scrollRef}
@@ -37,8 +36,10 @@ function ChatWindow({ messages }) {
         sx={{
           display: "flex",
           flexDirection: "column",
+          justifyContent: "flex-end",
+          minHeight: "100%",
           gap: { xs: "12px", sm: "16px" },
-          alignItems :"flex-end"
+          alignItems: "flex-end",
         }}
       >
         {messages.map((item, index) => (
