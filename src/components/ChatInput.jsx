@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Box, TextField, IconButton, Paper,useTheme } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress,useMediaQuery } from "@mui/material";
 
 
 
 function ChatInput({onAdduser,onAddbot} ) {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const isSendEnabled = inputValue.trim().length > 0;
@@ -31,12 +32,12 @@ function ChatInput({onAdduser,onAddbot} ) {
     onAdduser(inputValue);
     setLoading(true);
     try{
-      const res = await axios.post("http://localhost:5000/chat",{
+      const res = await axios.post("http://192.168.1.101:5000/chat",{
         text: userText
       });
       onAddbot(res.data.reply)
   }catch(err){
-    onAdd(userText,"⚠️ Error: could not connect to the server")
+    onAddbot("⚠️ Error: could not connect to the server")
   }finally{
     setLoading(false);
   }
@@ -100,6 +101,7 @@ function ChatInput({onAdduser,onAddbot} ) {
                 minHeight: "24px",
                 maxHeight: "120px",
                 alignItems:"flex-start",
+                justifyContent:"center",
                 lineHeight: 1.5,
                 fontFamily: "inherit",
                 padding: 0,
@@ -143,7 +145,7 @@ function ChatInput({onAdduser,onAddbot} ) {
             disabled={!isSendEnabled || loading}
           >
 
-            {loading ? <CircularProgress size={20} color="inherit" /> : <SendIcon />}
+          {loading ? <CircularProgress size={isMobile ? 16 : 20} color="inherit" /> : <SendIcon />}
           </IconButton>
         </Box>
       </Paper>
