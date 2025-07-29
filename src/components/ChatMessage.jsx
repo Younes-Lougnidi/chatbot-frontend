@@ -42,7 +42,8 @@ function ChatMessage({ sender, text }) {
         borderBottomRightRadius: isUser ? "4px" : "18px",
         borderBottomLeftRadius: isUser ? "18px" : "4px",
         transition: theme.transitions.create(["background", "box-shadow"]),
-      }}
+        }
+      }
     >
       {text}
     </Box>

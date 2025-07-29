@@ -38,6 +38,7 @@ function ChatWindow({ messages }) {
           display: "flex",
           flexDirection: "column",
           gap: { xs: "12px", sm: "16px" },
+          alignItems :"flex-end"
         }}
       >
         {messages.map((item, index) => (
