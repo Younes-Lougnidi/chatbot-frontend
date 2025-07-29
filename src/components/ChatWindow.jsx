@@ -1,9 +1,18 @@
-import React from 'react';
-import { Box ,useTheme} from '@mui/material';
-import ChatMessage from './ChatMessage';
+import React, { useEffect, useRef } from "react";
+import { Box, useTheme } from "@mui/material";
+import ChatMessage from "./ChatMessage";
 
 function ChatWindow({ messages }) {
   const theme = useTheme();
+  const scrollRef = useRef(null);
+
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   return (
     <Box
       className="chat-container"
@@ -12,35 +21,27 @@ function ChatWindow({ messages }) {
         width: "100%",
         margin: "0 auto",
         backgroundColor: theme.palette.background.paper,
-        minHeight: 300,
-        position: "relative",
-        flex: 1,
-        overflowY: "auto",
+        height: { xs: 300, sm: 450 },
+        overflowY: "auto",            
+        padding: { xs: "8px", sm: "24px" },
         border: 0,
-        transition: theme.transitions.create('background-color'),
+        transition: theme.transitions.create("background-color"),
+        scrollbarWidth: "none",
+        "&::-webkit-scrollbar": {
+        display: "none",              
+        },
       }}
+      ref={scrollRef}
     >
       <Box
-        className="chat-content"
         sx={{
-          padding: { xs: "8px", sm: "24px" },
-          color: theme.palette.text.secondary,
-          textAlign: "center",
-          fontSize: { xs: "13px", sm: "16px" },
           display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-end",
-          height: { xs: 300, sm: 450 },
           flexDirection: "column",
           gap: { xs: "12px", sm: "16px" },
         }}
       >
         {messages.map((item, index) => (
-          <ChatMessage 
-            key={index} 
-            sender={item.sender} 
-            text={item.message} 
-          />
+          <ChatMessage key={index} sender={item.sender} text={item.message} />
         ))}
       </Box>
     </Box>

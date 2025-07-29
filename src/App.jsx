@@ -9,10 +9,12 @@ import { CustomThemeProvider } from './components/ThemeContext';
 function App() {
 const theme = useTheme();
   const [ChatMessages, setChatMessages] = useState([]);
-  const handleAddmessages = (chatSender, chatMessage) => {
-    setChatMessages([...ChatMessages, { sender: chatSender, message: chatMessage }]);
+  const handleAddmessagesUser = (Message) => {
+    setChatMessages(prev => [...prev, { sender: "user", message: Message }]);
   };
-
+  const handleAddmessageBot = (Message) => {
+    setChatMessages(prev => [...prev, { sender: "bot", message: Message }]);
+  };
   return (
     <CustomThemeProvider>
       <CssBaseline/>
@@ -38,7 +40,7 @@ const theme = useTheme();
       >
         <ChatHeader />
         <ChatWindow messages={ChatMessages} />
-        <ChatInput onAdd={handleAddmessages} />
+        <ChatInput onAdduser={handleAddmessagesUser} onAddbot ={handleAddmessageBot} />
       </Box>
     </CustomThemeProvider>
   );

@@ -27,6 +27,7 @@ function ChatMessage({ sender, text }) {
         lineHeight: 1.4,
         animation: `${slideIn} 0.3s ease`,
         alignSelf: isUser ? "flex-end" : "flex-start",
+        whiteSpace: "pre-wrap",
         background: isUser
           ? theme.palette.primary.main
           : theme.palette.mode === "dark"

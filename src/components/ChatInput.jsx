@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { Box, TextField, IconButton, Paper,useTheme } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import axios from "axios";
+import { CircularProgress } from "@mui/material";
 
-function ChatInput({ onAdd }) {
+
+
+function ChatInput({onAdduser,onAddbot} ) {
   const theme = useTheme();
-  const [sender, setSender] = useState("");
+  const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const isSendEnabled =
-    (sender === "user" || sender === "bot") && inputValue.trim().length > 0;
+  const isSendEnabled = inputValue.trim().length > 0;
 
-  const handleInputChange2 = (event) => {
+  const handleInputChange = (event) => {
     setInputValue(event.target.value);
   };
 
-  const handleInputChange1 = (event) => {
-    setSender(event.target.value);
-  };
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter" && isSendEnabled) {
@@ -24,12 +24,23 @@ function ChatInput({ onAdd }) {
     }
   };
 
-  const handleSendClick = () => {
-    onAdd(sender, inputValue);
+  async function handleSendClick() {
+    if (!isSendEnabled || loading) return ;
+    const userText = inputValue;
     setInputValue("");
-    setSender("");
-  };
-
+    onAdduser(inputValue);
+    setLoading(true);
+    try{
+      const res = await axios.post("http://localhost:5000/chat",{
+        text: userText
+      });
+      onAddbot(res.data.reply)
+  }catch(err){
+    onAdd(userText,"⚠️ Error: could not connect to the server")
+  }finally{
+    setLoading(false);
+  }
+  }
   return (
     <Box
       sx={{
@@ -63,32 +74,7 @@ function ChatInput({ onAdd }) {
           },
         }}
       >
-        <TextField
-          variant="standard"
-          placeholder="Sender"
-          value={sender}
-          onChange={handleInputChange1}
-          onKeyDown={handleKeyPress}
-          InputProps={{
-            disableUnderline: true,
-            sx: {
-              border: `2px solid ${theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'}`,
-              borderRadius: "25px",
-              minHeight: { xs: "32px", sm: "35px" },
-              width: { xs: "80px", sm: "100px" },
-              textAlign: "center",
-              padding: "3px 8px",
-              color: theme.palette.text.primary,
-              fontSize: { xs: "13px", sm: "16px" },
-              "& input": {
-                textAlign: "center",
-                padding: 0,
-              },
-            },
-          }}
-        />
-
-        
+    
         <Box sx={{ 
           flex: 1, 
           minWidth: 0,
@@ -99,8 +85,9 @@ function ChatInput({ onAdd }) {
             multiline
             fullWidth
             value={inputValue}
-            onChange={handleInputChange2}
+            onChange={handleInputChange}
             onKeyDown={handleKeyPress}
+            disabled = {loading}
             sx={{
               width: '100%',
               '& .MuiInputBase-root': {
@@ -140,12 +127,12 @@ function ChatInput({ onAdd }) {
               height: { xs: "30px", sm: "36px" },
               background: theme.palette.primary.main,
               color: "white",
-              opacity: isSendEnabled ? 1 : 0.5,
-              cursor: isSendEnabled ? "pointer" : "not-allowed",
+              opacity: (isSendEnabled|| loading) ? 1 : 0.5,
+              cursor: (isSendEnabled|| loading) ? "pointer" : "not-allowed",
               transition: "all 0.2s ease",
               "&:hover": {
                 background: theme.palette.primary.dark,
-                transform: isSendEnabled ? "scale(1.05)" : "none",
+                transform: (isSendEnabled|| loading) ? "scale(1.05)" : "none",
               },
               "& svg": {
                 width: { xs: "16px", sm: "20px" },
@@ -153,9 +140,10 @@ function ChatInput({ onAdd }) {
               },
             }}
             onClick={handleSendClick}
-            disabled={!isSendEnabled}
+            disabled={!isSendEnabled || loading}
           >
-            <SendIcon />
+
+            {loading ? <CircularProgress size={20} color="inherit" /> : <SendIcon />}
           </IconButton>
         </Box>
       </Paper>
@@ -163,4 +151,4 @@ function ChatInput({ onAdd }) {
   );
 }
 
-export default ChatInput;
+export default ChatInput
