@@ -1,7 +1,8 @@
 import React from "react";
+import "katex/dist/katex.min.css";
 import { Box, keyframes, useTheme } from "@mui/material";
+import { InlineMath, BlockMath } from "react-katex";
 
-// Define the slideIn animation
 const slideIn = keyframes`
   from {
     opacity: 0;
@@ -12,6 +13,22 @@ const slideIn = keyframes`
     transform: translateY(0);
   }
 `;
+const renderWithMath = (content) => {
+  // Split content by LaTeX delimiters ($...$ and $$...$$)
+  const parts = content.split(/(\$\$.*?\$\$|\$.*?\$)/g);
+
+  return parts.map((part, index) => {
+    if (part.startsWith("$$") && part.endsWith("$$")) {
+      // Block math (display mode)
+      return <BlockMath key={index} math={part.slice(2, -2)} />;
+    } else if (part.startsWith("$") && part.endsWith("$")) {
+      // Inline math
+      return <InlineMath key={index} math={part.slice(1, -1)} />;
+    } else {
+      return <span key={index}>{part}</span>;
+    }
+  });
+};
 
 function ChatMessage({ sender, text }) {
   const theme = useTheme();
@@ -42,10 +59,13 @@ function ChatMessage({ sender, text }) {
         borderBottomRightRadius: isUser ? "4px" : "18px",
         borderBottomLeftRadius: isUser ? "18px" : "4px",
         transition: theme.transitions.create(["background", "box-shadow"]),
-        }
-      }
+        "& .katex": {
+          color: isUser ? "#fff" : "inherit",
+          fontSize: "inherit",
+        },
+      }}
     >
-      {text}
+      {renderWithMath(text)}
     </Box>
   );
 }

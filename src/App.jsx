@@ -36,6 +36,7 @@ const theme = useTheme();
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
           marginTop: { xs: '50px', sm: 0 },
           transition: 'all 0.3s ease',
+          overflow: 'hidden',
         }}
       >
         <ChatHeader />
