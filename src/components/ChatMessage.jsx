@@ -30,7 +30,7 @@ const renderWithMath = (content) => {
   });
 };
 
-function ChatMessage({ sender, text }) {
+function ChatMessage({ sender, text,id }) {
   const theme = useTheme();
   const isUser = sender === "user";
 

@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { Box, TextField, IconButton, Paper,useTheme } from "@mui/material";
+import { Box, TextField, IconButton, Paper, useTheme } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
-import { CircularProgress,useMediaQuery } from "@mui/material";
+import { CircularProgress, useMediaQuery } from "@mui/material";
 
-
-
-function ChatInput({onAdduser,onAddbot} ) {
+function ChatInput({ onUpdatebot ,onAdduser, onAddbot }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [loading, setLoading] = useState(false);
@@ -17,7 +15,6 @@ function ChatInput({onAdduser,onAddbot} ) {
     setInputValue(event.target.value);
   };
 
-
   const handleKeyPress = (event) => {
     if (event.key === "Enter" && isSendEnabled) {
       event.preventDefault();
@@ -26,21 +23,44 @@ function ChatInput({onAdduser,onAddbot} ) {
   };
 
   async function handleSendClick() {
-    if (!isSendEnabled || loading) return ;
+    if (!isSendEnabled || loading) return;
     const userText = inputValue;
     setInputValue("");
     onAdduser(inputValue);
     setLoading(true);
-    try{
-      const res = await axios.post("http://127.0.0.1:5000/chat",{
-        text: userText
+    try {
+      const response = await fetch("http://127.0.0.1:5000/chat", {
+        method: "POST",
+        headers: {
+          "content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: userText }),
       });
-      onAddbot(res.data.reply)
-  }catch(err){
-    onAddbot("⚠️ Error: could not connect to the server")
-  }finally{
-    setLoading(false);
-  }
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let done = false;
+      let botReply = "";
+
+      // Add empty bot message and get its id:
+      const botMessageId = onAddbot("");
+
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        if (value) {
+          const chunk = decoder.decode(value, { stream: true });
+          botReply += chunk;
+          onUpdatebot(botMessageId, botReply);
+        }
+      }
+    } catch (err) {
+      console.log(err)
+      onAddbot("⚠️ Error: could not connect to the server");
+    } finally {
+      setLoading(false);
+    }
   }
   return (
     <Box
@@ -54,7 +74,7 @@ function ChatInput({onAdduser,onAddbot} ) {
         margin: "0 auto",
         padding: { xs: "0 8px", sm: "0 12px" },
         border: 0,
-        transition: theme.transitions.create('background'),
+        transition: theme.transitions.create("background"),
       }}
     >
       <Paper
@@ -67,19 +87,22 @@ function ChatInput({onAdduser,onAddbot} ) {
           background: theme.palette.background.paper,
           borderRadius: "25px",
           margin: { xs: "8px 0", sm: "16px" },
-          border: `2px solid ${theme.palette.mode === 'dark' ? '#334155' : '#e2e8f0'}`,
-          transition: theme.transitions.create(['border-color', 'box-shadow']),
+          border: `2px solid ${
+            theme.palette.mode === "dark" ? "#334155" : "#e2e8f0"
+          }`,
+          transition: theme.transitions.create(["border-color", "box-shadow"]),
           "&:focus-within": {
             borderColor: theme.palette.primary.main,
             boxShadow: `0 0 0 3px ${theme.palette.primary.light}40`,
           },
         }}
       >
-    
-        <Box sx={{ 
-          flex: 1, 
-          minWidth: 0,
-        }}>
+        <Box
+          sx={{
+            flex: 1,
+            minWidth: 0,
+          }}
+        >
           <TextField
             variant="standard"
             placeholder="Type and press [enter]"
@@ -88,31 +111,31 @@ function ChatInput({onAdduser,onAddbot} ) {
             value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyPress}
-            disabled = {loading}
+            disabled={loading}
             sx={{
-              width: '100%',
-              '& .MuiInputBase-root': {
-                width: '100%',
-                border: 'none',
-                outline: 'none',
+              width: "100%",
+              "& .MuiInputBase-root": {
+                width: "100%",
+                border: "none",
+                outline: "none",
                 fontSize: { xs: "14px", sm: "16px" },
                 color: theme.palette.text.primary,
                 background: "transparent",
                 minHeight: "24px",
                 maxHeight: "120px",
-                alignItems:"flex-start",
-                justifyContent:"center",
+                alignItems: "flex-start",
+                justifyContent: "center",
                 lineHeight: 1.5,
                 fontFamily: "inherit",
                 padding: 0,
-                '&:before, &:after': {
-                  display: 'none'
+                "&:before, &:after": {
+                  display: "none",
                 },
-                '& textarea': {
-                  padding: '0 !important',
-                  resize : 'none',
-                  overflow:"hidden",
-                  '&::placeholder': {
+                "& textarea": {
+                  padding: "0 !important",
+                  resize: "none",
+                  overflow: "hidden",
+                  "&::placeholder": {
                     color: theme.palette.text.secondary,
                     opacity: 1,
                   },
@@ -129,12 +152,12 @@ function ChatInput({onAdduser,onAddbot} ) {
               height: { xs: "30px", sm: "36px" },
               background: theme.palette.primary.main,
               color: "white",
-              opacity: (isSendEnabled|| loading) ? 1 : 0.5,
-              cursor: (isSendEnabled|| loading) ? "pointer" : "not-allowed",
+              opacity: isSendEnabled || loading ? 1 : 0.5,
+              cursor: isSendEnabled || loading ? "pointer" : "not-allowed",
               transition: "all 0.2s ease",
               "&:hover": {
                 background: theme.palette.primary.dark,
-                transform: (isSendEnabled|| loading) ? "scale(1.05)" : "none",
+                transform: isSendEnabled || loading ? "scale(1.05)" : "none",
               },
               "& svg": {
                 width: { xs: "16px", sm: "20px" },
@@ -144,8 +167,11 @@ function ChatInput({onAdduser,onAddbot} ) {
             onClick={handleSendClick}
             disabled={!isSendEnabled || loading}
           >
-
-          {loading ? <CircularProgress size={isMobile ? 16 : 20} color="inherit" /> : <SendIcon />}
+            {loading ? (
+              <CircularProgress size={isMobile ? 16 : 20} color="inherit" />
+            ) : (
+              <SendIcon />
+            )}
           </IconButton>
         </Box>
       </Paper>
@@ -153,4 +179,4 @@ function ChatInput({onAdduser,onAddbot} ) {
   );
 }
 
-export default ChatInput
+export default ChatInput;

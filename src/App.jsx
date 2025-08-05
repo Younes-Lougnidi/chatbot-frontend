@@ -10,10 +10,21 @@ function App() {
 const theme = useTheme();
   const [ChatMessages, setChatMessages] = useState([]);
   const handleAddmessagesUser = (Message) => {
-    setChatMessages(prev => [...prev, { sender: "user", message: Message }]);
+    const id = Date.now()
+    setChatMessages(prev => [...prev, { id:id ,sender: "user", message: Message }]);
   };
   const handleAddmessageBot = (Message) => {
-    setChatMessages(prev => [...prev, { sender: "bot", message: Message }]);
+    const id = Date.now()
+    setChatMessages(prev => [...prev, { id:id ,sender: "bot", message: Message }]);
+    return id;
+  };
+  const handleUpdateBotMessage = (id ,partialMessage)=>{
+    setChatMessages(prev =>prev.map(msg =>{
+      if(msg.id === id ){
+        return{...msg , message :partialMessage};
+      }
+      return msg;
+    }));
   };
   return (
     <CustomThemeProvider>
@@ -41,7 +52,7 @@ const theme = useTheme();
       >
         <ChatHeader />
         <ChatWindow messages={ChatMessages} />
-        <ChatInput onAdduser={handleAddmessagesUser} onAddbot ={handleAddmessageBot} />
+        <ChatInput onAdduser={handleAddmessagesUser} onAddbot ={handleAddmessageBot} onUpdatebot = {handleUpdateBotMessage} />
       </Box>
     </CustomThemeProvider>
   );
