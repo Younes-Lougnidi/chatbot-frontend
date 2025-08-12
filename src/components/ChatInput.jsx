@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { Box, TextField, IconButton, Paper, useTheme } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import axios from "axios";
 import { CircularProgress, useMediaQuery } from "@mui/material";
+import StopIcon from "@mui/icons-material/Stop";
 
-function ChatInput({ onUpdatebot ,onAdduser, onAddbot }) {
+function ChatInput({ onUpdatebot, onAdduser, onAddbot }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const isSendEnabled = inputValue.trim().length > 0;
+  const [controller, setController] = useState(null);
+  const sessionId = "user123";
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -28,13 +30,23 @@ function ChatInput({ onUpdatebot ,onAdduser, onAddbot }) {
     setInputValue("");
     onAdduser(inputValue);
     setLoading(true);
+    const abortController = new AbortController();
+    setController(abortController);
+
+    let dots = 'Bot is typing';
+    const dot_id = onAddbot("Bot is typing");
+    let dotInterval = setInterval(()=>{
+      dots = dots.length < 16 ? dots + "." :"Bot is typing";
+      onUpdatebot(dot_id,dots);
+    },500)
     try {
       const response = await fetch("http://127.0.0.1:5000/chat", {
         method: "POST",
         headers: {
           "content-Type": "application/json",
         },
-        body: JSON.stringify({ text: userText }),
+        body: JSON.stringify({ text: userText, session_id: sessionId }),
+        signal: abortController.signal,
       });
       if (!response.ok) throw new Error("Network response was not ok");
 
@@ -44,7 +56,7 @@ function ChatInput({ onUpdatebot ,onAdduser, onAddbot }) {
       let botReply = "";
 
       // Add empty bot message and get its id:
-      const botMessageId = onAddbot("");
+      clearInterval(dotInterval);
 
       while (!done) {
         const { value, done: doneReading } = await reader.read();
@@ -52,15 +64,29 @@ function ChatInput({ onUpdatebot ,onAdduser, onAddbot }) {
         if (value) {
           const chunk = decoder.decode(value, { stream: true });
           botReply += chunk;
-          onUpdatebot(botMessageId, botReply);
+          onUpdatebot(dot_id, botReply);
         }
       }
     } catch (err) {
-      console.log(err)
+      clearInterval(dotInterval)
+      if (err.name === "AbortError") {
+        console.log("Fetch aborted by user (stop button).");
+        return; // don't show error in chat
+      }
+      console.error(err);
       onAddbot("⚠️ Error: could not connect to the server");
     } finally {
       setLoading(false);
     }
+  }
+  async function handleStopClick() {
+    if (controller) controller.abort();
+    await fetch("http://127.0.0.1:5000/stop", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId: sessionId }),
+    });
+    setLoading(false);
   }
   return (
     <Box
@@ -116,6 +142,7 @@ function ChatInput({ onUpdatebot ,onAdduser, onAddbot }) {
               width: "100%",
               "& .MuiInputBase-root": {
                 width: "100%",
+                overflowY: "auto",
                 border: "none",
                 outline: "none",
                 fontSize: { xs: "14px", sm: "16px" },
@@ -164,14 +191,9 @@ function ChatInput({ onUpdatebot ,onAdduser, onAddbot }) {
                 height: { xs: "16px", sm: "20px" },
               },
             }}
-            onClick={handleSendClick}
-            disabled={!isSendEnabled || loading}
+            onClick={loading ? handleStopClick : handleSendClick}
           >
-            {loading ? (
-              <CircularProgress size={isMobile ? 16 : 20} color="inherit" />
-            ) : (
-              <SendIcon />
-            )}
+            {loading ? <StopIcon /> : <SendIcon />}
           </IconButton>
         </Box>
       </Paper>

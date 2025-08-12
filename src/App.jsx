@@ -10,7 +10,7 @@ function App() {
 const theme = useTheme();
   const [ChatMessages, setChatMessages] = useState([]);
   const handleAddmessagesUser = (Message) => {
-    const id = Date.now()
+    const id = Date.now()+"1"
     setChatMessages(prev => [...prev, { id:id ,sender: "user", message: Message }]);
   };
   const handleAddmessageBot = (Message) => {
