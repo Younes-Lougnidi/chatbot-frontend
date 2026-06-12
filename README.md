@@ -1,8 +1,8 @@
-# 💬 Chatbot Frontend
+# Chatbot Frontend
 
 A modern, interactive chatbot interface built with React and Vite. This personal project demonstrates a clean UI with real-time chat functionality, mathematical formula support, and a responsive design.
 
-## ✨ Features
+## Features
 
 - **Interactive Chat Interface** - Real-time messaging with smooth animations
 - **Math Formula Support** - Display LaTeX equations using KaTeX
@@ -11,7 +11,7 @@ A modern, interactive chatbot interface built with React and Vite. This personal
 - **Icon Support** - Bootstrap icons and React icons for enhanced visuals
 - **Fast Development** - Powered by Vite for instant HMR (Hot Module Replacement)
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend Framework**: React 19
 - **Build Tool**: Vite
@@ -22,7 +22,7 @@ A modern, interactive chatbot interface built with React and Vite. This personal
 - **Styling**: Emotion (CSS-in-JS)
 - **Linting**: ESLint
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -48,7 +48,7 @@ npm run dev
 
 The application will open in your browser at `http://localhost:5173` (or another available port).
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 chatbot-frontend/
@@ -64,7 +64,7 @@ chatbot-frontend/
 └── eslint.config.js      # ESLint configuration
 ```
 
-## 📦 Available Scripts
+## Available Scripts
 
 | Command | Description |
 |---------|-------------|
@@ -72,15 +72,15 @@ chatbot-frontend/
 | `npm run dev` | Start the development server with HMR |
 | `npm run build` | Build the project for production |
 
-## 🎨 Customization
+## Customization
 
 The UI is built with Material-UI components, making it easy to customize colors, themes, and layouts. Check the MUI documentation for more customization options.
 
-## 📝 License
+## License
 
 This is a personal project. Feel free to use it as inspiration for your own projects!
 
-## 👤 Author
+## Author
 
 **Younes Lougnidi**
 
